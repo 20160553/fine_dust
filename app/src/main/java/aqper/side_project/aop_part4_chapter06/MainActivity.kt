@@ -3,9 +3,11 @@ package aqper.side_project.aop_part4_chapter06
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import aqper.side_project.aop_part4_chapter06.data.Repository
 import aqper.side_project.aop_part4_chapter06.data.models.airquality.Grade
@@ -56,11 +58,22 @@ class MainActivity : AppCompatActivity() {
         val locationPermissionGranted =
             requestCode == REQUEST_ACCESS_LOCATION_PERMISSIONS &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED
+        val backgroundLocationPermissionGranted =
+            requestCode == REQUEST_BACKGROUND_ACCESS_LOCATION_PERMISSIONS &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED
 
-        if (!locationPermissionGranted) {
-            finish()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!backgroundLocationPermissionGranted) {
+                requestBackgroundLocationPermission()
+            } else {
+                fetchAirQualityData()
+            }
         } else {
-            fetchAirQualityData()
+            if (!locationPermissionGranted) {
+                finish()
+            } else {
+                fetchAirQualityData()
+            }
         }
     }
 
@@ -82,6 +95,15 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ),
             REQUEST_ACCESS_LOCATION_PERMISSIONS
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun requestBackgroundLocationPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+            REQUEST_BACKGROUND_ACCESS_LOCATION_PERMISSIONS
         )
     }
 
@@ -163,5 +185,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_ACCESS_LOCATION_PERMISSIONS = 100
+        private const val REQUEST_BACKGROUND_ACCESS_LOCATION_PERMISSIONS = 101
     }
 }

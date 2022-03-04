@@ -18,7 +18,7 @@ enum class Grade(
     BAD("나쁨",  "☹", R.color.yellow),
 
     @SerializedName("4")
-    AWFUL("매우 나쁨", "😭", R.color.green),
+    AWFUL("매우 나쁨", "😭", R.color.gray),
     UNKNOWN("미측정", "😅", R.color.gray);
 
     override fun toString(): String {
