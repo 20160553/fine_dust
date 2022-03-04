@@ -17,6 +17,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Aoppart4chapter06">
         <activity
+            android:screenOrientation="portrait"
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
